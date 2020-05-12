@@ -1,0 +1,18 @@
+Introduction: 
+	This project was intended to support variable-length integers, which isn't inbuilt in C. How is this useful? In our regular programs, we normally don't see a problem in using the int data type itself. Sometimes, when numbers get pretty big, long long is usually the way to go. But even then, for some applications, long long wouldn't help.
+For example, consider the factorial program. If we use int data type, it works well for small inputs. But it fails miserably for slightly bigger inputs, like 100. Even long long wouldn't help since upper limit of long long is 9223372036854775807, and 100! is of the order of 10^157. Using variable length integers would help accommodate such huge numbers, and this program does exactly that. 
+	Storing big integers in limited space gives us a lot of power to work with huge numbers. For example, this program could calculate 2^(1000) and give the answer. I have implemented other useful functions as well such as binomial coefficient, sort, multiply, fibonacci etc.
+
+Approach:
+	In this section, I will explain in brief how each function works with the 'intal' datatype. First of all, the intal datatype is stored as null-terminated string of ASCII characters in the heap. This would mean that each digit would be stored as a character. For example, 12 would be stored as "1 2 \0". 
+
+intal_add:
+	This function takes in two intal arguments. Now we can't directly convert to them to ints because that defeats the purpose. So this function adds each digit individually, and there is a carry variable that stores the carry value for the addition of the next two digits. The digits in their ASCII form can be converted to ints by subtracting '0' from them. To convert ints to characters, add '0'. The algorithm implemented is the basic addition algorithm we all learnt in first standard. The bigger number is placed above the smaller number, and starting from the right each pair of digits are added and stored in the result pointer.
+
+intal_compare:
+	This function takes in two intals, and returns 1 if intal1 is greater than intal2, 0 if they are the same and -1 if intal1 is lesser than intal2. By using strlen, we can directly deduce which one of them is bigger and return the result. However, is both their lengths are same, we run through the strings comparing each digit from left to right. If at any point the digits don't match, they are compared and the appropriate value is returned. If all the digits match, we will reach the end of the loop and that would mean the intals are equal, and thus it returns 0.
+
+intal_diff:
+	
+	
+  
