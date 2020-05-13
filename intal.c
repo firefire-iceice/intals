@@ -281,7 +281,7 @@ char* intal_multiply(char* int1, char* int2) {
 		return result;
 
 }
-
+char* intal_pow(char* intal1, unsigned int n);
 char* intal_mod(char* intal1, char* intal2) {
 	int res = intal_compare(intal1, intal2);
 	int i1, i2;
@@ -299,12 +299,11 @@ char* intal_mod(char* intal1, char* intal2) {
 		// free(int2);
 		// return int1;
 		char *prev = NULL;
-		// printf("%s %s %d %d\n", int1,int2,i1,i1 - 1 - (i2 - 1));
-		int2 = intal_multiply(int2, intal_pow(convertToIntal(10),convertToIntal(i1 - 1 - (i2 - 1) - 1)));
-		// printf("%s %s\n", int1,int2);
+		// printf("%s %s %d %d\n", int1,int2,i1,i1 - 1 - (i2 - 1) - 1);
+		if (i1 - i2 >=1)
+			int2 = intal_multiply(int2, intal_pow(convertToIntal(10),i1 - 1 - (i2 - 1) - 1));
 		int i = 0;
 		while (intal_compare(int1, int2) == 1) {
-			// printf("rofl:%s %s\n", int1, int2);
 			free(temp);
 			temp = int2;
 			int2 = intal_add(int2, int2);
@@ -319,15 +318,6 @@ char* intal_mod(char* intal1, char* intal2) {
 		free(int1);
 		free(int2);
 		return prev;
-		// while (intal_compare(int1, int2) == 1) {
-		// 	printf("rofl1:%s %s\n", int1, int2);
-		// 	temp = int2;
-		// 	int2 = intal_add(int2, intal2);
-		// 	free(temp);
-		// }
-		// temp = int2;
-		// int2 = intal_diff(int2, intal2);
-		// free(temp);
 
 	} else if (res == -1){
 		free(int2);
@@ -340,41 +330,24 @@ char* intal_mod(char* intal1, char* intal2) {
 	}
 }
 
-char* intal_pow(char* intal1, char* intal2) {
+char* intal_pow(char* intal1, unsigned int n) {
 	char zero[2] = {'0', '\0'};
 	int i1 = strlen(intal1);
-	int i2 = strlen(intal2);
 	if (!strcmp(intal1, zero)) {
 		char *result = malloc(sizeof(char) * 2);
 		result[0] = '0';
 		result[1] = '\0';
 		return result;
-	} else if (!strcmp(intal2, zero)) {
+	} else if (n == 0) {
 		char *result = malloc(sizeof(char) * 2);
 		result[0] = '1';
 		result[1] = '\0';
 		return result;
 	} else {
-		// zero[0] = '1';
-		// char *int1 = malloc(sizeof(char) * 10000);
-		// char *int2 = malloc(sizeof(char) * 10000);
-		// char *temp = malloc(sizeof(char) * 10000);
-		// strcpy(temp, intal1);
-		// strcpy(int1, intal1);
-		// strcpy(int2, intal2);
-		// int i = 1;
-		// while (intal_compare(zero, int2)) {
-		// 	int1 = intal_multiply(int1, temp);
-		// 	int2 = intal_diff(int2, zero);
-		// }
-		// free(temp);
-		// free(int2);
-		// return int1;
-		int n = convertToInt(intal2);
 		int n1 = n;
 		n = n/2;
-		char *newintal2 = convertToIntal(n);
-		char *resprev = intal_pow(intal1, newintal2);
+		// char *newintal2 = convertToIntal(n);
+		char *resprev = intal_pow(intal1, n);
 		char *result = intal_multiply(resprev, resprev);
 		if (n1%2 == 1) {
 			result = intal_multiply(result, intal1);
@@ -584,17 +557,21 @@ int intal_search(char **arr, int n, char* key) {
 }
 
 int intal_binsearch(char **arr, int n, char* key) {
-	int k = convertToInt(key);
+	// int k = convertToInt(key);
+	// printf("yourin\n");
 	int start = 0;
 	int end = n - 1;
 	while (start <= end) {
 		int mid = (start + end) / 2;
-		int num = convertToInt(arr[mid]);
-		if (num == k) {
+		// int num = convertToInt(arr[mid]);
+		int num = intal_compare(key, arr[mid]);
+		if (num == 0) {
 			return mid;
-		} else if (k < num) {
+		} else if (num == -1) {
+			// printf("1:%d\n", mid);
 			end = mid - 1;
 		} else {
+			// printf("2:%d\n", mid);
 			start = mid + 1;
 		}
 	}
@@ -661,6 +638,3 @@ char* coin_row_problem(char **arr, int n) {
 	return a2;
 }
 
-int main(void) {
-	
-}

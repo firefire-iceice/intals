@@ -2,7 +2,7 @@
 // intal is a nonnegative integer of arbitrary length (not more than 1000 decimal digits).
 // The integer is stored as a null terminated string of ASCII characters.
 // String of decimal digits ('0' thru '9') are stored in big endian style.
-// That is, the most significant digit is at the dead of the string.
+// That is, the most significant digit is at the head of the string.
 // Eg: Integer 25 is stored in str as '2' at str[0], '5' at str[1], and null char at str[2].
 
 // DO NOT modify this header file.
@@ -10,16 +10,6 @@
 // The implementation file has the definition of the functions decalred here.
 // You can write some of your own helper functions, keep them "static".
 // Use the sample test file (that has the main function) to test your implementation.
-
-// All the functions, whenever they return an intal, it should have
-// stripped off the leading zeros. For example, difference of "103" and
-// "98" should be returned as "5", not as "05" or "005".
-
-// intal as a parameter is never invalid or null and has at least a digit and a null termination.
-// intal as a return type has to allocated (using malloc).
-// The returning intal is expected to be less than 10^1000.
-// Any other memory allocated by you should be freed by you.
-// No global variables should be used.
 
 // Returns the sum of two intals.
 char* intal_add(char* intal1, char* intal2);
@@ -41,16 +31,16 @@ char* intal_mod(char* intal1, char* intal2);
 
 // Returns intal1 ^ intal2.
 // Let 0 ^ n = 0, where n is an intal.
-char* intal_pow(char* intal1, char* intal2);
+char* intal_pow(char* intal1, unsigned int n);
+
+// Returns Greatest Common Devisor of intal1 and intal2.
+// Let GCD be "0" if one of intal1 and intal2 is "0".
+char* intal_gcd(char* intal1, char* intal2);
 
 // Returns nth fibonacci number.
 // intal_fibonacci(0) = intal "0".
 // intal_fibonacci(1) = intal "1".
 char* intal_fibonacci(unsigned int n);
-
-// Returns Greatest Common Devisor of intal1 and intal2.
-// Let GCD be "0" if one of intal1 and intal2 is "0".
-char* intal_gcd(char* intal1, char* intal2);
 
 // Returns the factorial of n.
 char* intal_factorial(unsigned int n);
