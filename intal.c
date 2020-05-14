@@ -411,7 +411,6 @@ static void freeRow(char **a, int k) {
 	for (int i = 0; i <= k; ++i) {
 		free(a[i]);
 	}
-	free(a);
 }
 //TO DO
 static int min(int a, int b) {
@@ -453,7 +452,9 @@ static char *intal_bin(char *n, char *k) {
 		for (int i = 2; i <= n1; ++i) {
 			temp = dpTable[0];
 			dpTable[0] = dpTable[1];
-			freeRow(temp,k1);
+
+			freeRow(temp,i - 2);
+			free(temp);
 			dpTable[1] = malloc(sizeof(char *) * (k1 + 1));
 			for (int j = 0; j <= min(i,k1); ++j) {
 				if ((j == i) || (j == 0)) {
@@ -642,4 +643,9 @@ char* coin_row_problem(char **arr, int n) {
 	free(a1);
 	return a2;
 }
+
+// int main(void) {
+// 	printf("%s\n", intal_bincoeff(10,8));
+// }
+
 
