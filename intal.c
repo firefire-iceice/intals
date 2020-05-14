@@ -389,14 +389,19 @@ char* intal_gcd(char* a, char* b) {
 char* intal_factorial(unsigned int n) {
 	char *temp = malloc(sizeof(char) * 2);
 	char *result = malloc(sizeof(char) * 2);
+	char *freepointer;
 	result[0] = '1';
 	result[1] = '\0';
 	temp[0] = '1';
 	temp[1] = '\0';
 	char one[] = {'1', '\0'};
 	for (int i = 2; i <= n; ++i) {
-		temp = intal_add(temp, one);
-		result = intal_multiply(result, temp);
+		freepointer = temp;
+		temp = intal_add(freepointer, one);
+		free(freepointer);
+		freepointer = result;
+		result = intal_multiply(freepointer, temp);
+		free(freepointer);
 	}
 	free(temp);
 	return result;
