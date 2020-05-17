@@ -31,8 +31,7 @@ intal_multiply:
 	The algorithm used is the brute force multiplication algorithm which had quadratic time complexity. The function first determines the larger of the two intals and names the larger one intal1 and the smaller one intal2. The larger number is multiplied digit-wise with the smaller number, and after doing so with a digit of intal2, the next result is stored with an extra shift. The function reverses the string because it is easier to work forwards than backwards in an array. The final result is returned as intal.
 
 intal_mod:
-	The function first compares the two intals given. If the first intal is lesser than the second one, the first intal itself is the answer. If intal1 is greater, the function subtracts intal2 from intal1 until intal1 becomes lesser than intal2. Once that happens, the function returns the value stored in intal1. If intal1 and intal2 are the same, the answer would be zero.
-
+	The function first compares the two intals given. If the first intal is lesser than the second one, the first intal itself is the answer. If intal1 is greater, intal2 is appended with zeros such that its order is close to that of int1's. After that, int2 is subtracted from int1 until int1 becomes lesser than int2. Now this whole process repeated until int2 doesn't have to be appended with zeros, and int1 is subtracted with int2 until it becomes lesser than int2, which is then the answer that has to be returned.
 intal_pow:
 	The intal_pow function first checks if intal1 is zero, in which case the answer would be zero itself. Then it checks if intal2 is zero, which is another base case where the answer would be one. If none of these are true, the function then calls itself recursively to find the value when intal2 is halved. The value returned is squared and multiplied with intal1 if needed and then returned. This algorithm takes O(log n) time.
 
@@ -68,9 +67,6 @@ intal_search:
 
 intal_binsearch:
 	This performs binary search on an array which is presumed to be sorted. This function runs in O(log n) time by eliminating half the elements under consideration in each iteration. It also returns the offset of the first occurrence of the given key, -1 if not found.
-
-(Helper function)swap1:
-	this helper function swaps two strings given their pointers.
 
 (Helper function)heapify:
 	Starting with i, it is compared with its children to check for validity of the heap. If one of the children is bigger than the element at i, theyre swapped using swap1 and heapify is called again on the child's location to ensure the validity of the max heap.
