@@ -283,44 +283,58 @@ char* intal_multiply(const char* int1,const char* int2) {
 }
 char* intal_pow(const char* intal1, unsigned int n);
 char* intal_mod(const char* intal1,const char* intal2) {
+	// printf("%s %s\n", intal1, intal2);
 	int res = intal_compare(intal1, intal2);
+	char *zero = convertToIntal(0);
 	int i1, i2;
 	i1 = strlen(intal1);
 	i2 = strlen(intal2);
 	char *int1 = malloc(sizeof(char) * (i1 + 1));
 	char *int2 = malloc(sizeof(char) * (i2 + 1));
-	char *temp = malloc(sizeof(char));
 	strcpy(int1, intal1);
 	strcpy(int2, intal2);
 	if (res == 1) {
-		char *prev = NULL;
-		// printf("%s %s %d %d\n", int1,int2,i1,i1 - 1 - (i2 - 1) - 1);
-		if (i1 - i2 >=1)
-			int2 = intal_multiply(int2, intal_pow(convertToIntal(10),i1 - 1 - (i2 - 1) - 1));
-		int i = 0;
-		while (intal_compare(int1, int2) == 1) {
-			free(temp);
-			temp = int2;
-			int2 = intal_add(int2, int2);
+		char *ten = convertToIntal(10);
+		char *temp;
+		char *temp1;
+		while (i1 > i2) {
+			if (i1 - i2 >= 1) {
+				int2 = intal_multiply(int2, intal_pow(ten, i1 - 1 - (i2 - 1) - 1));
+			}
+			while ((intal_compare(int1, int2) == 1) || (intal_compare(int1, int2) == 0)) {
+				temp = int1;
+				int1 = intal_diff(int1, int2);
+				free(temp);
+			}
+			i1 = strlen(int1);	
+			free(int2);
+			int2 = malloc(sizeof(char) * (i2 + 1));
+			strcpy(int2, intal2);
+			i2 = strlen(int2);
 		}
-		prev = int2;
-		int2 = intal_diff(int2, temp);
-		free(prev);
-		free(temp);
-		temp = intal_diff(int1, int2);
-		prev = intal_mod(temp, intal2);
-		free(temp);
-		free(int1);
-		free(int2);
-		return prev;
-
+		if (intal_compare(int1, int2) == 1) {
+			while (intal_compare(int1, int2) == 1) {
+				temp = int1;
+				int1 = intal_diff(int1,int2);
+				free(temp);
+			}
+		}
+		if (intal_compare(int1, int2) == 0) {
+			free(int1);
+			free(int2);
+			return zero;
+		} else {
+			free(int2);
+			free(zero);
+			return int1;
+		}
 	} else if (res == -1){
+		free(zero);
 		free(int2);
 		return int1;
 	} else {
-		char *zero = malloc(sizeof(char) * 2);
-		zero[0] = '0';
-		zero[1] = '\0';
+		free(int1);
+		free(int2);
 		return zero;
 	}
 }
@@ -362,9 +376,14 @@ char* intal_fibonacci(unsigned int n) {
 	} else if (n == 1) {
 		return curr;
 	}
+	char *temp;
 	for (int i = 2; i <= n; ++i) {
+		temp = curr;
 		curr = intal_add(curr, prev);
+		free(temp);
+		temp = prev;
 		prev = intal_diff(curr, prev);
+		free(temp);
 	}
 	free(prev);
 	return curr;
@@ -577,14 +596,14 @@ int intal_binsearch(char **arr, int n, const char* key) {
 	return -1;
 }
 
-static void swap1(char *a, char *b) {
-	int n = strlen(a);
-	char *temp = malloc(sizeof(char) * (n + 1));
-	strcpy(temp, a);
-	strcpy(a, b);
-	strcpy(b,temp);
-	free(temp);
-}
+// static void swap1(char *a, char *b) {
+// 	int n = strlen(a);
+// 	char *temp = malloc(sizeof(char) * (n + 1));
+// 	strcpy(temp, a);
+// 	strcpy(a, b);
+// 	strcpy(b,temp);
+// 	free(temp);
+// }
 
 static void heapify(char **arr, int i, int n) {
 	if (2*i > n) {
@@ -644,7 +663,11 @@ char* coin_row_problem(char **arr, int n) {
 }
 
 // int main(void) {
-// 	printf("%s\n", intal_bincoeff(1000,500));
+// 	char *s1 = "67823164721646126489723189491264762138648921638462891364962319847891264623189749823648923184982091480297489236746294031280381073198646239871920371829647182649831279127937129863781624891720943731987498162386129371902738912646197489236478623894751827531829738912631826312";
+// 	char *s2 = "9619468173127839612837127";
+// 	char *result = intal_mod(s1,s2);
+// 	printf("answer: %s\n", result);
+// 	free(result);
 // }
 
 
