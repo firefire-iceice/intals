@@ -3,6 +3,24 @@
 #include <string.h>
 #include "intal.h"
 
+static void strip(char **s) {
+	int n = strlen(*s);
+	int count = 0;
+	for (int i = 0; (*s)[i] == '0'; ++i) {
+		++count;
+	}
+	if (count == n) {
+		free(*s);
+		*s = malloc(sizeof(char) * 2);
+		(*s)[0] = '0';
+		(*s)[1] = '\0';
+	} else {
+		for (int i = 0; i <= (n - count); ++i) {
+			(*s)[i] = (*s)[i + count];
+		}
+	}
+}
+
 char* intal_add(const char* intal1,const char* intal2) {
 	int i1,i2;
 	i1 = strlen(intal1);
@@ -29,6 +47,7 @@ char* intal_add(const char* intal1,const char* intal2) {
 			result[0] = carry + '0';
 		}
 
+		strip(&result);
 		return result;
 	} else {
 		result = malloc(sizeof(char) * (i1 + 2));
@@ -49,6 +68,7 @@ char* intal_add(const char* intal1,const char* intal2) {
 			}
 			result[0] = carry + '0';
 		}
+		strip(&result);
 		return result;
 	} 
 }
@@ -61,10 +81,7 @@ int intal_compare(const char* intal1,const char* intal2) {
 		return 1;
 	} else if (i1 < i2) {
 		return -1;
-	} else {
-		// if (!strcmp(intal1,intal2)) {
-		// 	return 0;
-		// } 
+	} else { 
 		for (int i = 0; i < i1; ++i) {
 			if (intal1[i] < intal2[i]) {
 				return -1;
@@ -72,7 +89,6 @@ int intal_compare(const char* intal1,const char* intal2) {
 				return 1;
 			}
 		}
-		//this is to eliminate the useless warning message
 		return 0;
 	}
 }
@@ -121,10 +137,9 @@ char* intal_diff(const char* int1,const char* int2) {
 		for (int i = 0; result[i] == '0'; ++i) {
 			++count;
 		}
-		for (int i = 0; i <= i2 - count; ++i) {
+		for (int i = 0; i <= (i2 - count); ++i) {
 			result[i] = result[i + count];
 		}
-		result[i2 - count + 1] = '\0';
 		free(intal1);
 		free(intal2);
 		return result;
@@ -156,24 +171,13 @@ char* intal_diff(const char* int1,const char* int2) {
 		for (int i = 0; result[i] == '0'; ++i) {
 			++count;
 		}
-		for (int i = 0; i <= i1 - count; ++i) {
+		for (int i = 0; i <= (i1 - count); ++i) {
 			result[i] = result[i + count];
 		}
-		result[i1 - count + 1] = '\0';
 		free(intal1);
 		free(intal2);
 		return result;
 	}
-}
-
-static int convertToInt(char *s) {
-	int len = strlen(s);
-	int n = 0;
-	for (int i = 0; i < strlen(s); ++i) {
-		n *= 10;
-		n += s[i] - '0';
-	}
-	return n;
 }
 
 static char *convertToIntal(int n) {
@@ -196,15 +200,16 @@ static char *convertToIntal(int n) {
 		n = n / 10;
 	}
 	result[count] = '\0';
+	strip(&result);
 	return result;
 }
-
+//Character swap
 static void swap(char *a, char *b) {
 	char temp = *a;
 	*a = *b;
 	*b = temp;
 }
-
+//Reversing a string
 static char* strrev(const char * str) 
 { 
 	int n = strlen(str); 
@@ -259,23 +264,11 @@ char* intal_multiply(const char* int1,const char* int2) {
 			++count;
 		}
 		result[j + count - 1] = '\0';
-
+		char *temp1 = result;
 		result = strrev(result);
-		int p = 0;
-		for (int i = 0; result[i] == '0'; ++i) {
-			p++;
-		}
-		for (i = 0; i < (strlen(result) - p); ++i) {
-			result[i] = result[i + p];
-		}
+		strip(&result);
+		free(temp1);
 		
-		
-		if (result[0] == '0') {
-			result[0] = '0';
-			result[1] = '\0';
-		} else {
-			result[i] = '\0';
-		}
 		free(intal1);
 		free(intal2);
 		return result;
@@ -283,7 +276,6 @@ char* intal_multiply(const char* int1,const char* int2) {
 }
 char* intal_pow(const char* intal1, unsigned int n);
 char* intal_mod(const char* intal1,const char* intal2) {
-	// printf("%s %s\n", intal1, intal2);
 	int res = intal_compare(intal1, intal2);
 	char *zero = convertToIntal(0);
 	int i1, i2;
@@ -296,7 +288,6 @@ char* intal_mod(const char* intal1,const char* intal2) {
 	if (res == 1) {
 		char *ten = convertToIntal(10);
 		char *temp;
-		char *temp1;
 		while (i1 > i2) {
 			if (i1 - i2 >= 1) {
 				int2 = intal_multiply(int2, intal_pow(ten, i1 - 1 - (i2 - 1) - 1));
@@ -310,7 +301,7 @@ char* intal_mod(const char* intal1,const char* intal2) {
 			free(int2);
 			int2 = malloc(sizeof(char) * (i2 + 1));
 			strcpy(int2, intal2);
-			i2 = strlen(int2);
+			// i2 = strlen(int2);
 		}
 		if (intal_compare(int1, int2) == 1) {
 			while (intal_compare(int1, int2) == 1) {
@@ -326,10 +317,12 @@ char* intal_mod(const char* intal1,const char* intal2) {
 		} else {
 			free(int2);
 			free(zero);
+			strip(&int1);
 			return int1;
 		}
 	} else if (res == -1){
 		free(zero);
+		strip(&int1);
 		free(int2);
 		return int1;
 	} else {
@@ -341,7 +334,6 @@ char* intal_mod(const char* intal1,const char* intal2) {
 
 char* intal_pow(const char* intal1, unsigned int n) {
 	char zero[2] = {'0', '\0'};
-	int i1 = strlen(intal1);
 	if (!strcmp(intal1, zero)) {
 		char *result = malloc(sizeof(char) * 2);
 		result[0] = '0';
@@ -355,11 +347,16 @@ char* intal_pow(const char* intal1, unsigned int n) {
 	} else {
 		int n1 = n;
 		n = n/2;
+		char *temp;
 		char *resprev = intal_pow(intal1, n);
 		char *result = intal_multiply(resprev, resprev);
 		if (n1%2 == 1) {
+			temp = result;
 			result = intal_multiply(result, intal1);
+			free(temp);
 		}
+		free(resprev);
+		strip(&result);
 		return result;
 
 	}
@@ -386,18 +383,16 @@ char* intal_fibonacci(unsigned int n) {
 		free(temp);
 	}
 	free(prev);
+	strip(&curr);
 	return curr;
 }
 
 char* intal_gcd(const char* a,const char* b) {
 	if (!intal_compare(a, "0")) {
-		// printf("no\n");
-		// return b;
 		char *temp = malloc(sizeof(char) * (strlen(b) + 1));
 		strcpy(temp,b);
 		return temp;
 	} else {
-		// printf("yes %s %s\n", a, b);
 		return intal_gcd(intal_mod(b,a), a);
 	}
 }
@@ -420,15 +415,10 @@ char* intal_factorial(unsigned int n) {
 		free(freepointer);
 	}
 	free(temp);
+	strip(&result);
 	return result;
 }
 
-static void freeRow(char **a, int k) {
-	for (int i = 0; i <= k; ++i) {
-		free(a[i]);
-	}
-}
-//TO DO
 static int min(int a, int b) {
 	if (a < b)
 		return a;
@@ -436,109 +426,71 @@ static int min(int a, int b) {
 		return b;
 }
 
-static char *intal_bin(char *n, char *k) {
+char* intal_bincoeff(unsigned int n, unsigned int k) {
 	char *one = malloc(sizeof(char) * 2);
 	char *zero = malloc(sizeof(char) * 2);
 	one[0] = '1';
 	zero[0] = '0';
 	one[1] = zero[1] = '\0';
-	if ((!intal_compare(k,zero)) || (!intal_compare(k,n))){
+	if ((k == 0) || (k == n)){
 		return one;
 	} else {
-
-		// return intal_add(intal_bin(intal_diff(n, one), intal_diff(k, one)),intal_bin(intal_diff(n,one),k));
-		int k1 = convertToInt(k);
-		int n1 = convertToInt(n);
+		int k1 = k;
+		int n1 = n;
 		if (k1 > n1/2) {
 			k1 = n1 - k1;
 		}
-		char ***dpTable;
-		dpTable = malloc(2 * sizeof(char**));
-		for (int i = 0; i < 2; ++i) {
-			dpTable[i] = malloc(sizeof(char *) * (k1 + 1));
+		char **arr = malloc(sizeof(char *) * (k1 + 1));
+		for (int i = 1; i < (k1 + 1); ++i) {
+			arr[i] = convertToIntal(0);
 		}
-		for (int i = 0; i <= min(0,k1); ++i) {
-			dpTable[0][i] = convertToIntal(1);
-		}
-		for (int i = 0; i <= min(1,k1); ++i) {
-			if ((i == 1) || (i == 0)) {
-				dpTable[1][i] = convertToIntal(1);
+		arr[0] = convertToIntal(1);
+		for (int i = 1; i <= n1; ++i) {
+			if (i >= k1) {
+				for (int j = 0; j <= k1; ++j) {
+					if (((k1 - j) == i) || ((k1 - j) == 0)) {
+						free(arr[k1 - j]);
+						arr[k1 - j] = convertToIntal(1);
+					} else {
+						char *temp = arr[k1 - j];
+						arr[k1 - j] = intal_add(arr[k1 - j], arr[k1-j - 1]);
+						free(temp);
+					}
+				}
 			} else {
-				// dpTable[1][i] = convertToIntal(convertToInt(dpTable[0][i]) + convertToInt(dpTable[0][i - 1]));
-				dpTable[1][i] = intal_add(dpTable[0][i], dpTable[0][i - 1]);
-			}
-		}
-		char **temp;
-		for (int i = 2; i <= n1; ++i) {
-			temp = dpTable[0];
-			dpTable[0] = dpTable[1];
-			freeRow(temp,min(i - 2, k1));
-			free(temp);
+				for (int j = i; j >= 0; --j) {
+					if ((j == i) || (j == 0)) {
+						free(arr[j]);
+						arr[j] = convertToIntal(1);
+					} else {
+						char *temp = arr[j];
+						arr[j] = intal_add(arr[j], arr[j - 1]);
+						free(temp);
+					}
 
-			dpTable[1] = malloc(sizeof(char *) * (k1 + 1));
-			for (int j = 0; j <= min(i,k1); ++j) {
-				if ((j == i) || (j == 0)) {
-					dpTable[1][j] = convertToIntal(1);
-				} else {
-					// dpTable[1][j] = convertToIntal(convertToInt(dpTable[0][j - 1]) + convertToInt(dpTable[0][j]));
-					dpTable[1][j] = intal_add(dpTable[0][j - 1], dpTable[0][j]);
 				}
 			}
 		}
-		freeRow(dpTable[0],k1);
-		for (int i = 0; i < k1; ++i) {
-			free(dpTable[1][i]);
+		int rn = strlen(arr[k1]);
+		char *result = malloc(sizeof(char) * (rn + 1));
+		strcpy(result, arr[k1]);
+		for (int i = 0; i <= k1; ++i) {
+			free(arr[i]);
 		}
-		char *result = dpTable[1][k1];
+		free(arr);
 		return result;
-
-
 	}
-}
-
-char* intal_bincoeff(unsigned int n, unsigned int k) {
-	int lenn, lenk;
-	lenn = lenk = 0;
-	int n1 = n;
-	int k1 = k;
-	while (n >= 1) {
-		++lenn;
-		n = n / 10;
-	}
-	while (k >= 1) {
-		++lenk;
-		k = k / 10;
-	}
-	n = n1;
-	k = k1;
-	char *nn = malloc(sizeof(char) * (lenn + 1));
-	char *kk = malloc(sizeof(char) * (lenk + 1));
-	for (int i = 0; i < lenn; ++i) {
-		nn[lenn - i - 1] = n%10 + '0';
-		n = n / 10;
-	}
-	for (int j = 0; j < lenk; ++j) {
-		kk[lenk - j - 1] = k%10 + '0';
-		k = k / 10;
-	}
-	nn[lenn] = kk[lenk] = '\0';
-	char *result = intal_bin(nn,kk);
-	free(nn);
-	free(kk);
-	return result;
 }
 
 int intal_max(char **arr, int n) {
 	char *max = convertToIntal(0);
 	int count = 0;
 	for (int i = 0; i < n; ++i) {
-
 		if (intal_compare(max, arr[i]) == -1) {
 			free(max);
 			count = i;
 			max = malloc(sizeof(char) * (strlen(arr[i]) + 1));
 			strcpy(max, arr[i]);
-			max[strlen(max)] = '\0';
 		}
 	}
 	free(max);
@@ -549,14 +501,12 @@ int intal_min(char **arr, int n) {
 	char *min = malloc(sizeof(char) * (strlen(arr[0]) + 1));
 	int count = 0;
 	strcpy(min, arr[0]);
-	min[strlen(min)] = '\0';
 	for (int i = 1; i < n; ++i) {
 		if (intal_compare(min, arr[i]) == 1) {
 			free(min);
 			count = i;
 			min = malloc(sizeof(char) * (strlen(arr[i]) + 1));
 			strcpy(min, arr[i]);
-			min[strlen(min)] = '\0';
 		}
 	}
 	free(min);
@@ -575,35 +525,29 @@ int intal_search(char **arr, int n,const char* key) {
 }
 
 int intal_binsearch(char **arr, int n, const char* key) {
-	// int k = convertToInt(key);
-	// printf("yourin\n");
 	int start = 0;
 	int end = n - 1;
 	while (start <= end) {
 		int mid = (start + end) / 2;
-		// int num = convertToInt(arr[mid]);
 		int num = intal_compare(key, arr[mid]);
 		if (num == 0) {
-			return mid;
+			int k = 0;
+			if ((mid >= 1) && (intal_compare(arr[mid - 1], key) == 0)) {
+				while (((mid - k) >= 0) && (intal_compare(arr[mid - k], key) == 0)) {
+					k = k + 1;
+				}
+				return (mid - k + 1);
+			} else {
+				return mid;
+			}
 		} else if (num == -1) {
-			// printf("1:%d\n", mid);
 			end = mid - 1;
 		} else {
-			// printf("2:%d\n", mid);
 			start = mid + 1;
 		}
 	}
 	return -1;
 }
-
-// static void swap1(char *a, char *b) {
-// 	int n = strlen(a);
-// 	char *temp = malloc(sizeof(char) * (n + 1));
-// 	strcpy(temp, a);
-// 	strcpy(a, b);
-// 	strcpy(b,temp);
-// 	free(temp);
-// }
 
 static void heapify(char **arr, int i, int n) {
 	if (2*i > n) {
@@ -616,7 +560,6 @@ static void heapify(char **arr, int i, int n) {
 		}
 	}
 	if (intal_compare(arr[j - 1], arr[i - 1]) == 1) {
-		// swap1(arr[j - 1], arr[i - 1]);
 		char *temp = arr[j - 1];
 		arr[j - 1] = arr[i - 1];
 		arr[i - 1] = temp;
@@ -629,7 +572,6 @@ void intal_sort(char **arr, int n) {
 		heapify(arr, i, n);
 	}
 	for (int i = n; i > 1; --i) {
-		// swap1(arr[i - 1], arr[0]);
 		char *temp = arr[i - 1];
 		arr[i - 1] = arr[0];
 		arr[0] = temp;
@@ -645,29 +587,23 @@ char* coin_row_problem(char **arr, int n) {
 	char *a1 = convertToIntal(0);
 	char *a2 = malloc(sizeof(char) * (strlen(arr[0]) + 1));
 	strcpy(a2, arr[0]);
+	char *sum;
 	for (int i = 2; i <= n; ++i) {
-		if (intal_compare(intal_add(arr[i - 1], a1), a2) == 1) {
+		sum = intal_add(arr[i - 1], a1);
+		if (intal_compare(sum, a2) == 1) {
 			temp = a1;
 			a1 = a2;
-			a2 = intal_add(arr[i - 1], temp);
+			a2 = sum;
 			free(temp);
 		} else {
 			free(a1);
 			a1 = a2;
 			a2 = intal_add(a2, zero);
+			free(sum);
 		}
 	}
 	free(zero);
 	free(a1);
+	strip(&a2);
 	return a2;
 }
-
-// int main(void) {
-// 	char *s1 = "67823164721646126489723189491264762138648921638462891364962319847891264623189749823648923184982091480297489236746294031280381073198646239871920371829647182649831279127937129863781624891720943731987498162386129371902738912646197489236478623894751827531829738912631826312";
-// 	char *s2 = "9619468173127839612837127";
-// 	char *result = intal_mod(s1,s2);
-// 	printf("answer: %s\n", result);
-// 	free(result);
-// }
-
-
